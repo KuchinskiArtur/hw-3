@@ -9,92 +9,76 @@ let span = document.getElementsByClassName("close")[0];
 
 let data = [];
 
+const render = (title, index, completed = false) => (
+    `<div class='card ${completed ? "completed" : ""}' id=${index}>
+    ${title}
+    <button id='btnDelete'>Delete</button>
+    <button id='btnDone'>Done</button>
+    </div>
+    `
+)
+
 btnSubmit.addEventListener("click", (event) => {
     event.preventDefault();
-    data.push(inputText.value);
+    data.push({ text: inputText.value, completed: false });
     todo.innerHTML = '';
 
-    data.forEach((title, index) => {
-        todo.innerHTML += `
-            <div class='card' id=${index}>
-            ${title}
-            <button id='btnDelete'>Delete</button>
-            <button id='btnDone'>Done</button>
-            </div>
-            `;
+    data.forEach((item, index) => {
+        todo.innerHTML += render(item.text, index, item.completed)
     })
 
     form.reset();
 });
 
 todo.addEventListener('click', (event) => {
-    if (event.target.id === 'btnDelete') {
-        const card = event.target.closest('.card');
-        const cardId = +card.id;
-        data.splice(cardId, 1)
-        todo.innerHTML = '';
-        data.forEach((title, index) => {
-            todo.innerHTML += `
-            <div class='card' id=${index}>
-            ${title}
-            <button id='btnDelete'>Delete</button>
-            <button id='btnDone'>Done</button>
-            </div>
-            `;
+    const card = event.target.closest('.card');
+    const cardId = +card.id;
 
-        })
+    switch (event.target.id) {
+        case 'btnDelete':
+            todo.innerHTML = '';
+            data.splice(cardId, 1)
+            data.forEach((item, index) => {
+                todo.innerHTML += render(item.text, index, item.completed)
+            })
+            break;
+        case 'btnDone':
+            todo.innerHTML = '';
+            const completed = event.target.closest('.completed')
+            data.forEach((item, index) => {
+                if (index === cardId) {
+                    item.completed = completed ? false : true
+                }
+                todo.innerHTML += render(item.text, index, item.completed)
+            })
+            break;
     }
 });
 
-todo.addEventListener('click', (event) => {
-    if (event.target.id === 'btnDone') {
-        const card = event.target.closest('.card');
-        const cardId = +card.id;
-        const completed = event.target.closest('.completed')
-        todo.innerHTML = '';
-        data.forEach((title, index) => {
-            if (index == cardId && !completed) {
-                todo.innerHTML += `
-                <div class='card completed' id=${index}>
-                ${title}
-                <button id='btnDelete'>Delete</button>
-                <button id='btnDone'>Done</button>
-                </div>
-                `;
-            } else {
-                todo.innerHTML += `
-                <div class='card' id=${index}>
-                ${title}
-                <button id='btnDelete'>Delete</button>
-                <button id='btnDone'>Done</button>
-                </div>
-                `;
-            }
-        })
-    }
-});
-
-
-
-btn.onclick = function(event) {
+const modalFunction = (event) => {
     event.preventDefault();
     modal.style.display = "block";
 }
 
-span.onclick = function() {
+btn.addEventListener('click', modalFunction);
+
+const modalFunctions = () => {
     modal.style.display = "none";
 }
 
-window.onclick = function(event) {
+span.addEventListener('click', modalFunctions);
+
+const modalsFunction = (event) => {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 }
+window.addEventListener('click', modalsFunction);
 
-btnClear.addEventListener('click', clearFunction);
-
-function clearFunction(event) {
+const clearFunction = (event) => {
     event.preventDefault();
     todo.innerHTML = '';
     data = [];
 }
+
+btnClear.addEventListener('click', clearFunction);
