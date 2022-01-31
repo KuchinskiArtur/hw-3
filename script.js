@@ -55,25 +55,25 @@ todo.addEventListener('click', (event) => {
     }
 });
 
-const modalFunction = (event) => {
+const openModal = (event) => {
     event.preventDefault();
     modal.style.display = "block";
 }
 
-btn.addEventListener('click', modalFunction);
+btn.addEventListener('click', openModal);
 
-const modalFunctions = () => {
+const modalFunction = () => {
     modal.style.display = "none";
 }
 
-span.addEventListener('click', modalFunctions);
+span.addEventListener('click', modalFunction);
 
-const modalsFunction = (event) => {
+const closeModal = (event) => {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 }
-window.addEventListener('click', modalsFunction);
+window.addEventListener('click', closeModal);
 
 const clearFunction = (event) => {
     event.preventDefault();
